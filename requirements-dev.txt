@@ -1,0 +1,9 @@
+# /Users/QXZ6BKI/work/road_plan/requirements-dev.txt
+-r requirements.txt
+
+# Jupyter kernel for VS Code
+ipykernel
+
+# Recommended development tools
+ruff
+black

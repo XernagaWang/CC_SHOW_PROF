@@ -1,0 +1,13 @@
+# /Users/QXZ6BKI/work/logbook_deployment/requirements.txt
+altair<5.0
+folium
+numpy
+openpyxl
+pandas
+Pillow
+plotly
+pydeck
+qrcode
+streamlit
+dotenv
+watchdog

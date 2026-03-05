@@ -1,0 +1,2 @@
+﻿City,Day,Date,Station,Use Case,Status,CPO Name,Manufacturer,MODEL,Voltage(V),Current(A),Power(kW),Start Method,Start Method_Other,Has_12A_24A,Start Time,Start SoC(%),End Time,End SoC(%),End Method,End Method_Other,End Reason,End Reason_Other,Test Result,Error Describe,Error Describe_Other,Remark
+成都,2,2026-03-05,武侯区南桥垃圾中转站充电站,AC_UC1_17460722,Normal Test,TEST_TLD,123,123,123,123,123,Scan QR Code,,True,2026-03-05 16:03:21,10,2026-03-05 16:03:24,20,reached target SOC,,Manual Stop,,None,None,,

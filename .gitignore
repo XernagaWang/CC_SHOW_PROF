@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+pip-selfcheck.json
+
+# Output folder
+output/
+
+# Image folders
+images/converted/
+images/qrcode/
+images/structured/
+images/thumbs/
+images/raw/
+index.csv
+photo_report.csv
+
+# VSCode
+.vscode/
