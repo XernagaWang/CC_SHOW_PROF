@@ -8,14 +8,5 @@ env/
 venv/
 pip-selfcheck.json
 
-# Image folders
-images/converted/
-images/qrcode/
-images/structured/
-images/thumbs/
-images/raw/
-index.csv
-photo_report.csv
-
 # VSCode
 .vscode/
