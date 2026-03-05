@@ -1,17 +1,17 @@
-import streamlit as st
+import streamlit as st 
 import numpy as np
 import pandas as pd
 import json
-import streamlit.components.v1 as components
+import streamlit.components.v1 as components 
 import urllib.parse
-import qrcode
+import qrcode 
 from io import BytesIO
 import datetime
 from datetime import timezone, timedelta
 import os
 import shutil
 import zipfile
-UTC8 = timezone(timedelta(hours=8)) # <--- 定义东八区
+UTC8 = timezone(timedelta(hours=8))
 
 # --- Version compatibility for rerun ---
 def rerun():
