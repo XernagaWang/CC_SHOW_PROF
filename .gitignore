@@ -8,9 +8,6 @@ env/
 venv/
 pip-selfcheck.json
 
-# Output folder
-output/
-
 # Image folders
 images/converted/
 images/qrcode/
