@@ -727,7 +727,7 @@ if selected_day == 'All':
     st.markdown("##### Daily AC/DC Charging Summary")
     daily_summary_df = get_daily_summary()
     if not daily_summary_df.empty:
-        st.dataframe(daily_summary_df, width='stretch')
+        st.dataframe(daily_summary_df, use_container_width=True)
     else:
         st.info("No UC01 records found to generate a summary.")
 else:
@@ -739,7 +739,7 @@ else:
     col2.metric("AC Charging Progress", f"{uc01_status['ac_completed']} / {uc01_status['ac_target']}")
 
     st.markdown("##### End Method Tracking Matrix")
-    st.dataframe(uc01_status['status_df'], width='stretch')
+    st.dataframe(uc01_status['status_df'], use_container_width=True)
 
 st.markdown("---") # Add a separator
 
