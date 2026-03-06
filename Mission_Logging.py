@@ -23,21 +23,23 @@ def rerun():
         st.experimental_rerun()
 
 # --- Global Option Constants (Translated) ---
-USE_CASE_OPTIONS = ["AC_UC1_17460722", "AC_UC2_7460719", "AC_UC3_17460723", "DC_UC4_17460724",  "DC_UC5_17460720", "DC_UC6_17460721"]
+USE_CASE_OPTIONS = ["UC01_CC_DC_AC_Sessions", "UC02_DC_eRoute_vWM", "UC03_TBD"]
 TEST_STATUS_OPTIONS = ["Normal Test", "Station Inaccessible (Access Control, Construction, etc.)", "Charger Damaged", "Map Navigation Inaccurate", "Other"]
 START_METHOD_OPTIONS = ["Scan QR Code", "Insert Card", "APP Operation", "Other"]
 HAS_12A_24A_OPTIONS = ["True", "False"]
-END_METHOD_OPTIONS = ["reached target SOC", "LAT", "CID", "RFID", "APP", "Other"]
-END_REASON_OPTIONS = ["Manual Stop", "Reached Target SoC", "Other"]
+END_METHOD_OPTIONS = ["Target SOC", "LAT", "CID", "RFID", "APP", "Other"]
+END_REASON_OPTIONS = ["Manual Stop", "Target SOC", "Other"]
 TEST_RESULT_OPTIONS = ["None", "Pass", "Failed"]
 ERROR_DESCRIBE_OPTIONS = ["None","GBT", "Charger", "ABK", "HVS", "CCU", "LAT", "CID", "PHUD", "Other"]
 
 CITIES = {
     "成都": "CD",
-    # "广州": "GZ",
     "重庆": "CQ",
     "贵阳": "GY", 
 }
+
+# --- Parameters ---
+UC02_POWER_THRESHOLD = 151.2
 
 # --- Page Setup ---
 st.set_page_config(layout="wide", page_title="On Mission")
@@ -64,6 +66,7 @@ def clear_form():
     st.session_state["selected_end_reason"] = END_REASON_OPTIONS[0]
     st.session_state["test_result"] = TEST_RESULT_OPTIONS[0]
     st.session_state["selected_error_describe"] = ERROR_DESCRIBE_OPTIONS[0]
+    st.session_state["charger_model"] = None # <-- Reset the new selectbox
     
     # Clear photo state as well
     st.session_state.photo_step = 0
@@ -176,21 +179,40 @@ def submit_callback():
     clear_form()
 
 def load_data(city_prefix):
-    """Load data files based on the city prefix (e.g., CD, GZ)."""
-    report_file = f"report_{city_prefix}_enriched.csv"
-    hotel_file = f"best_hotel_info_{city_prefix}.json"
-    
+    """
+    Loads all necessary data files based on the selected city.
+    - report_{city_prefix}_enriched.csv: The daily plan.
+    - all_map_stations_{city_prefix}.csv: Master list of all stations.
+    - mission_test_records.csv: The log of tests already performed.
+    """
     try:
-        output_path = "output/"
-        report_df = pd.read_csv(os.path.join(output_path, report_file))
-        # Assuming a general station file is still needed, or we can make this city-specific too
-        all_stations_df = pd.read_csv(os.path.join(output_path, "all_map_stations_CD.csv"))
-        with open(os.path.join(output_path, hotel_file), "r") as f:
-            hotel_info = json.load(f)
-        return report_df, all_stations_df, hotel_info
+        report_path = os.path.join('output', f'report_{city_prefix}_enriched.csv')
+        stations_path = os.path.join('output', f'all_map_stations_{city_prefix}.csv')
+        
+        report_df = pd.read_csv(report_path)
+        all_stations_df = pd.read_csv(stations_path)
+        
+        # --- UC2 Column Logic ---
+        # Check if 'UC2' column exists. If not, create it.
+        if 'UC2' not in all_stations_df.columns:
+            print(f"'UC2' column not found in '{stations_path}'. Processing file...")
+            # Clean the power column
+            all_stations_df['max_dc_power'] = pd.to_numeric(all_stations_df['max_dc_power'], errors='coerce').fillna(0)
+            # Create the 'UC2' column and convert boolean to integer (1 or 0)
+            all_stations_df['UC2'] = (all_stations_df['max_dc_power'] > UC02_POWER_THRESHOLD).astype(int)
+            # Save the modified DataFrame back to the CSV
+            all_stations_df.to_csv(stations_path, index=False, encoding='utf-8-sig')
+            print(f"Successfully processed and updated {stations_path}")
+        # --- End UC2 Logic ---
+
+        if os.path.exists('mission_test_records.csv'):
+            records_df = pd.read_csv('mission_test_records.csv')
+        else:
+            records_df = pd.DataFrame(columns=['Date', 'City', 'Station Name', 'MODEL', 'Result', 'User'])
     except FileNotFoundError as e:
-        st.error(f"Error: Data file not found for the selected city ({e.filename}). Please ensure reports have been generated.")
-        return None, None, None
+        st.error(f"Data file not found for city {city_prefix}. Please check the 'output' directory. Missing file: {e.filename}")
+        return pd.DataFrame(), pd.DataFrame(), pd.DataFrame()
+    return report_df, all_stations_df, records_df
 
 def create_zip_archive():
     """Create a zip archive of all recorded data."""
@@ -218,20 +240,20 @@ def create_zip_archive():
 # --- UI Layout ---
 
 st.sidebar.header("Select City")
-selected_city_name = st.sidebar.selectbox("Current City:", list(CITIES.keys()))
+selected_city_name = st.sidebar.selectbox("Current City:", list(CITIES.keys()), key="city_selector")
 city_prefix = CITIES[selected_city_name]
 
 # For now, strategy is hardcoded, can be a selectbox later if needed.
 strategy_prefix = "A" 
 
 # Load data based on selected city
-report_df, all_stations_df, hotel_info = load_data(city_prefix)
+report_df, all_stations_df, records_df = load_data(city_prefix)
 
 if report_df is None:
     st.stop()
 
 st.title("Test Log Book")
-st.subheader(f"Hotel: {hotel_info.get('Hotel Name', 'N/A')}")
+st.subheader(f"Hotel: {records_df.get('Hotel Name', 'N/A')}")
 
 st.sidebar.header("Select Day")
 selected_day = st.sidebar.selectbox(
@@ -297,65 +319,68 @@ if 'zip_buffer_for_download' in st.session_state:
         mime="application/zip",
         on_click=lambda: st.session_state.pop('zip_buffer_for_download', None) # Clear after download
     )
-
+st.markdown("---") # Add a separator
 
 st.header("Detail of Each Day")
 
 with st.expander("On-site Test Log Input", expanded=True):
-    available_rows = filtered_report_df[~filtered_report_df['目的地'].astype(str).str.contains('完成測試')]
-    station_options = available_rows['目的地'].unique().tolist()
-
     # --- Logic for Manual Station Input ---
     MANUAL_STATION_INPUT = "--- 手动输入新站点 (列表中未找到) ---"
     
-    # Add the manual option to the list
+    # Define plan_to_display here to be used in this expander
+    plan_to_display = filtered_report_df[~filtered_report_df['目的地'].astype(str).str.contains('完成測試')]
+    
+    station_options = plan_to_display['目的地'].unique().tolist()
     full_station_options = [MANUAL_STATION_INPUT] + station_options
 
-    # Display the selectbox
-    selected_option = st.selectbox("Select Test Station", full_station_options)
+    # Display the selectbox with simplified options
+    selected_station = st.selectbox("Select Test Station", full_station_options)
 
     # Handle the selection
-    if selected_option == MANUAL_STATION_INPUT:
-        # If manual input is chosen, show a text input field
+    if selected_station == MANUAL_STATION_INPUT:
         manual_station_name = st.text_input("请输入新站点名称:", key="manual_station_name")
         st.session_state.selected_station_for_submit = manual_station_name
     else:
-        # Otherwise, use the selected station from the list
-        st.session_state.selected_station_for_submit = selected_option
+        st.session_state.selected_station_for_submit = selected_station
     
     # We still need to set the day
     st.session_state.selected_day_for_submit = selected_day
-
     # Only proceed to show the rest of the form if a station has been selected or entered
     if st.session_state.get("selected_station_for_submit"):
         
         # --- Use Case Steps Definition (with partial translation) ---
-        AC_UC1_STEPS = [
-            {"title": "PRE: Set Charging Method", "details": "Ensure charging method is AC charging."},
-            {"title": "PRE: Check SoC", "details": "State of charge of high voltage battery should be < 90%."},
-            {"title": "ACTION: Document EVSE Info", "details": "Note EVSE manufacturer, type, and model using the app or sheet."},
-            {"title": "ACTION: Set Charging Mode", "details": "Set charging mode to 'charge immediately'."},
-            {"title": "ACTION: Set Charging Target", "details": "Set charging target to 100% and deactivate AC-Limit."},
-            {"title": "ACTION: Deactivate Auto-Unlock", "details": "Deactivate 'Unlock charging cable after charging end'."},
-            {"title": "ACTION: Activate Flap Unlock", "details": "Activate 'Unlock charging socket flap permanently'."},
-            {"title": "ACTION: Plug in Cable", "details": "Open the charging flap and plug in the charging plug."},
-            {"title": "ACTION: Authenticate", "details": "If needed, authenticate at the charging station (e.g., press start button)."},
-            {"title": "ACTION: Check Charging Status", "details": "Expectation: Charging is active."},
-            {"title": "ACTION: Read Initial Power", "details": "Read the AC Charging Power. Expectation: Power is plausible."},
-            {"title": "ACTION: Adjust Current Limit", "details": "Set any charging current limitation between min/max of the vehicle charging power."},
-            {"title": "ACTION: Read Adjusted Power", "details": "Read the AC Charging Power again. Expectation: Power adjusts plausibly."},
-            {"title": "ACTION: Terminate Charging", "details": "Terminate 5-10 mins after start via EVSE or CID. Expectation: Terminates without errors."},
-            {"title": "ACTION: Check Cable Lock", "details": "Check locking status of charging cable. Expectation: Locked (if ended via EVSE), Unlocked (if ended via CID)."},
-            {"title": "ACTION: Unlock and Unplug", "details": "Unlock charging cable via LAT (if needed) and unplug."},
-            {"title": "ACTION: Close Flap", "details": "Close the charging flap."},
-            {"title": "ACTION: Document Results", "details": "Document test results in the app or sheet. Upload if necessary."}
+
+        UC01_STEPS = [
+            {"title": "执行 5 次直流快充 (DC)", "details": "在今天内完成 5 次直流快充测试。", "location": "车外 (Out-of-Car)", "icon": "🚶"},
+            {"title": "执行 2 次交流慢充 (AC)", "details": "在今天内完成 2 次交流慢充测试。", "location": "车外 (Out-of-Car)", "icon": "🚶"},
+            {"title": "使用不同方式结束充电", "details": "确保每次充电都尝试用不同的方式结束，例如：车机屏幕(HMI)、充电口按钮(LAT)、充电桩(EVSE stop)、达到目标电量(Target SOC)等。", "location": "车内/车外", "icon": "🔄"}
+        ]
+
+        UC02_STEPS = [
+            {"title": "规划导航", "details": "在车机上设置一个包含大功率快充站的长途导航。", "location": "车内 (In-Car)", "icon": "🚗"},
+            {"title": "开启电池预热", "details": "进入车辆‘充电设置’菜单，确保‘电池自动预热’功能已开启。", "location": "车内 (In-Car)", "icon": "🚗"},
+            {"title": "确认预热状态", "details": "观察仪表盘或中控屏，检查是否有预热图标（如带风扇的蓝色电池）。", "location": "车内 (In-Car)", "icon": "🚗"},
+            {"title": "检查预处理结果", "details": "抵达充电站后，在‘充电设置’中查看高压电池状态，确认‘预处理’为‘OK’。", "location": "车内 (In-Car)", "icon": "🚗"},
+            {"title": "核对建议时间", "details": "查看屏幕显示的‘建议充电时长’，判断其是否合理。", "location": "车内 (In-Car)", "icon": "🚗"},
+            {"title": "连接充电枪", "details": "打开充电口盖，并将充电枪插入车辆。", "location": "车外 (Out-of-Car)", "icon": "🚶"},
+            {"title": "启动充电", "details": "在充电桩上完成扫码/刷卡等认证操作。", "location": "车外 (Out-of-Car)", "icon": "🚶"},
+            {"title": "确认充电开始", "details": "观察车辆和充电桩，确认充电已成功激活。", "location": "车内/车外", "icon": "🔄"},
+            {"title": "完成充电", "details": "等待达到建议的充电时长后，停止充电。", "location": "车内/车外", "icon": "🔄"}
         ]
 
         use_case_steps = {
-            "AC_UC1_17460722": {"tip": "Follow the 18 steps below to complete the AC charging test.", "steps": AC_UC1_STEPS},
-            "DC_UC4_17460724": {"tip": "For this test, please charge for a fixed duration of 3 minutes.", "steps": ["1. Plug in and start charging.", "2. Time for 3 minutes.", "3. Record data and stop charging."]},
-            "DC_UC5_17460720": {"tip": "Charge to the target SoC.", "steps": ["1. Set the target SoC.", "2. Plug in to start charging, record the start time.", "3. When target SoC is reached, stop charging and record the end time."]},
-            "DC_UC6_17460721": {"tip": "For this test, please charge for a fixed duration of 5 minutes.", "steps": ["1. Plug in and start charging.", "2. Time for 5 minutes.", "3. Record data and stop charging."]},
+            "UC01_CC_DC_AC_Sessions": {
+                "tip": "每日任务：完成 5 次直流快充和 2 次交流慢充，并尝试用不同方式结束充电。", 
+                "steps": UC01_STEPS
+            },
+            "UC02_DC_eRoute_vWM": {
+                "tip": "导航到快充站，验证电池自动预热（vWM）功能。", 
+                "steps": UC02_STEPS
+            },
+            "UC03_TBD": {
+                "tip": "这是一个待定的 Use Case，具体测试步骤尚未提供。", 
+                "steps": [{"title": "等待任务详情", "details": "请等待项目经理提供此 Use Case 的具体测试步骤。", "location": "N/A", "icon": "❓"}]
+            },
         }
         
         selected_use_case = st.selectbox("Select Use Case", USE_CASE_OPTIONS, key="selected_use_case")
@@ -398,7 +423,8 @@ with st.expander("On-site Test Log Input", expanded=True):
 
         cpo_name = st.text_input("CPO Name", "", key="cpo_name")
         charger_manufacturer = st.text_input("Manufacturer", "", key="charger_manufacturer")
-        charger_model = st.text_input("MODEL", "", key="charger_model")
+        # charger_model = st.text_input("MODEL", "", key="charger_model") # <-- Replaced
+        charger_model = st.selectbox("Charge Type (MODEL)", ["AC", "DC"], key="charger_model", index=None, placeholder="Select charge type...") # <-- New
         charger_voltage = st.text_input("Rated Voltage (V)", "", key="charger_voltage")
         charger_current = st.text_input("Rated Current (A)", "", key="charger_current")
         charger_power = st.text_input("Rated Power (kW)", "", key="charger_power")
@@ -531,10 +557,12 @@ def generate_ditu_navi_link(row):
     return url
 
 with st.expander("Daily Target List (Click to expand)", expanded=False):
-    header_cols = st.columns([1, 4, 1])
+    # Adjust column ratios for the new "Features" column
+    header_cols = st.columns([1, 1, 4, 2])
     header_cols[0].markdown("**Day**")
-    header_cols[1].markdown("**Target Station**")
-    header_cols[2].markdown("**Navi QR Code**")
+    header_cols[1].markdown("**Features**")
+    header_cols[2].markdown("**Target Station**")
+    header_cols[3].markdown("**Navi QR Code**")
     st.markdown("---")
 
     filtered_navi_df = filtered_report_df[
@@ -543,28 +571,192 @@ with st.expander("Daily Target List (Click to expand)", expanded=False):
 
     for idx, row in filtered_navi_df.iterrows():
         navi_url = generate_ditu_navi_link(row)
-        cols = st.columns([1, 4, 1])
+        # Adjust column ratios for the new "Features" column
+        cols = st.columns([1, 1, 4, 2])
         cols[0].write(row['第幾天'])
-        cols[1].write(f"{row['目的地']}")
-        if cols[2].button("Generate QR Code", key=f"qr_btn_{idx}"):
+        
+        station_name = row['目的地']
+        
+        # Check if the station is a UC2 candidate and display an icon in the new column
+        is_uc2 = all_stations_df.loc[all_stations_df['station_name'] == station_name, 'UC2'].values
+        # print(f"UC2 value: {is_uc2}")
+        # print(all_stations_df['name'])
+        if len(is_uc2) > 0 and int(is_uc2[0]) == 1:
+            cols[1].write("🌡️🔋 vWM") # Display icon in the "Features" column
+        else:
+            cols[1].write("") # Leave it empty if not a UC2 station
+            
+        cols[2].write(station_name) # Display only the station name in its column
+
+        if cols[3].button("Generate QR Code", key=f"qr_btn_{idx}"):
             st.session_state['current_qr_url'] = navi_url
+            st.session_state['current_station_name'] = station_name # Store name for display
 
 st.sidebar.header("Navigation QR Code")
 
 if 'current_qr_url' in st.session_state:
-    current_row = None
-    for idx, row in filtered_navi_df.iterrows():
-        if generate_ditu_navi_link(row) == st.session_state['current_qr_url']:
-            current_row = row
-            break
-    if current_row is not None:
-        st.sidebar.info(f"**Navigating to: {current_row['目的地']}**")
-    else:
-        st.sidebar.info("**Navigation QR Code:**")
-    qr = qrcode.make(st.session_state['current_qr_url'])
+    # Display the station name and the QR code
+    st.sidebar.info(f"**Navigating to: {st.session_state.get('current_station_name', 'N/A')}**")
+    
+    # Generate QR code image from the URL stored in session state
+    qr = qrcode.QRCode(version=1, box_size=10, border=4)
+    qr.add_data(st.session_state['current_qr_url'])
+    qr.make(fit=True)
+    img = qr.make_image(fill_color="black", back_color="white")
+
+    # Convert image to bytes and display
     buf = BytesIO()
-    qr.save(buf, format="PNG")
-    st.sidebar.image(buf.getvalue(), caption="Scan to navigate", use_column_width=True)
+    img.save(buf, format="PNG")
+    st.sidebar.image(buf.getvalue(), caption="Scan to navigate with Google Maps", use_column_width=True)
 else:
-    st.sidebar.info("**Navigation QR Code:**")
-    st.sidebar.image("images/qrcode/qrcode_ex.jpg", caption="Try it!")
+    # Default display when no QR code has been generated yet
+    st.sidebar.info("Click '生成导航二维码' next to a station to generate its navigation QR code here.")
+    st.sidebar.image("images/qrcode/qrcode_ex.jpg", caption="QR code will appear here")
+
+def get_uc01_status_today(selected_day):
+    """
+    Analyzes records for a given day to track UC01 progress.
+    Returns a dictionary with counts and a status DataFrame.
+    """
+    # Define targets and categories
+    UC01_ID = "UC01_CC_DC_AC_Sessions"
+    DC_TARGET = 5
+    AC_TARGET = 2
+    # Re-ordered to prioritize longer, more specific matches first
+    END_METHODS_TO_TRACK = ["Target SOC", "LAT", "HMI", "APP", "RFID"] 
+    CHARGE_TYPES = ["AC", "DC"]
+
+    # Initialize status tracking
+    status = {
+        "dc_completed": 0,
+        "ac_completed": 0,
+        "dc_target": DC_TARGET,
+        "ac_target": AC_TARGET,
+        "status_df": pd.DataFrame('⬜️', index=END_METHODS_TO_TRACK, columns=CHARGE_TYPES)
+    }
+
+    record_file = "mission_test_records.csv"
+    if not os.path.exists(record_file):
+        return status # Return default status if no records exist
+
+    # Read records for the selected day
+    try:
+        df = pd.read_csv(record_file)
+        
+        # Logic to filter based on the selected day from the sidebar
+        if selected_day == 'All':
+            # For 'All', we show today's progress as a default view
+            day_filter = df["Date"] == datetime.datetime.now(UTC8).strftime("%Y-%m-%d")
+        else:
+            # For a specific day, filter by the 'Day' column
+            day_filter = df["Day"] == selected_day
+            
+        day_df = df[day_filter & (df["Use Case"] == UC01_ID)].copy()
+
+    except (FileNotFoundError, pd.errors.EmptyDataError):
+        return status # Return default if file is empty or not found
+
+    if day_df.empty:
+        return status
+
+    # --- Determine Charge Type (AC/DC) ---
+    # The 'MODEL' column now directly contains "AC" or "DC" from the selectbox.
+    day_df['Charge Type'] = day_df['MODEL']
+
+    # Count completed AC/DC sessions
+    status["dc_completed"] = day_df[day_df['Charge Type'] == 'DC'].shape[0]
+    status["ac_completed"] = day_df[day_df['Charge Type'] == 'AC'].shape[0]
+
+    # Update the status matrix
+    for _, row in day_df.iterrows():
+        # Ensure method is a string and strip whitespace for robust matching
+        method = str(row["End Method"]).strip()
+        charge_type = row["Charge Type"]
+        result = row["Test Result"]
+        
+        # Find which category the method falls into by checking for substrings.
+        # The list is ordered to check for "Target SOC" before shorter ones.
+        tracked_method = None
+        for m in END_METHODS_TO_TRACK:
+            if m in method:
+                tracked_method = m
+                break
+        
+        if tracked_method and charge_type in CHARGE_TYPES:
+            if result == "Pass":
+                status["status_df"].loc[tracked_method, charge_type] = '✅'
+            elif result == "Failed":
+                # Mark as failed, but only if not already passed
+                if status["status_df"].loc[tracked_method, charge_type] != '✅':
+                    status["status_df"].loc[tracked_method, charge_type] = '❌'
+
+    return status
+
+def get_daily_summary():
+    """
+    Generates a summary of AC/DC charges per day for UC01.
+    """
+    record_file = "mission_test_records.csv"
+    if not os.path.exists(record_file):
+        return pd.DataFrame(columns=["AC", "DC"])
+
+    try:
+        df = pd.read_csv(record_file)
+        uc01_df = df[df["Use Case"] == "UC01_CC_DC_AC_Sessions"].copy()
+        if uc01_df.empty:
+            return pd.DataFrame(columns=["AC", "DC"])
+
+        # Group by Day and MODEL (which is Charge Type), then count
+        summary = uc01_df.groupby(['Day', 'MODEL']).size().unstack(fill_value=0)
+
+        # Ensure both AC and DC columns exist
+        if 'AC' not in summary:
+            summary['AC'] = 0
+        if 'DC' not in summary:
+            summary['DC'] = 0
+            
+        return summary[['AC', 'DC']]
+
+    except (FileNotFoundError, pd.errors.EmptyDataError):
+        return pd.DataFrame(columns=["AC", "DC"])
+
+# --- UC01 Daily Task Dashboard ---
+st.header("UC01 Daily Task Dashboard")
+
+if selected_day == 'All':
+    st.markdown("##### Daily AC/DC Charging Summary")
+    daily_summary_df = get_daily_summary()
+    if not daily_summary_df.empty:
+        st.dataframe(daily_summary_df, width='stretch')
+    else:
+        st.info("No UC01 records found to generate a summary.")
+else:
+    # Pass the selected_day from the sidebar to the function
+    uc01_status = get_uc01_status_today(selected_day)
+
+    col1, col2 = st.columns(2)
+    col1.metric("DC Charging Progress", f"{uc01_status['dc_completed']} / {uc01_status['dc_target']}")
+    col2.metric("AC Charging Progress", f"{uc01_status['ac_completed']} / {uc01_status['ac_target']}")
+
+    st.markdown("##### End Method Tracking Matrix")
+    st.dataframe(uc01_status['status_df'], width='stretch')
+
+st.markdown("---") # Add a separator
+
+# --- Raw Data Viewer ---
+st.markdown("---")
+with st.expander("Raw Test Records Log (mission_test_records.csv)"):
+    record_file = "mission_test_records.csv"
+    if os.path.exists(record_file):
+        try:
+            raw_df = pd.read_csv(record_file)
+            if not raw_df.empty:
+                st.dataframe(raw_df)
+            else:
+                st.info("The record file is empty.")
+        except pd.errors.EmptyDataError:
+            st.info("The record file is empty.")
+        except Exception as e:
+            st.error(f"Could not read the record file: {e}")
+    else:
+        st.info("No records have been saved yet (`mission_test_records.csv` not found).")
