@@ -121,3 +121,23 @@
     - DC 充电: `x / 5`
     - AC 充电: `y / 2`
   - [ ] **记录结束方式**: 在表格中清晰地列出当天已经使用过的充电结束方式 (例如，`LAT`, `Target SOC` 等)，并标记其使用次数。这可以帮助测试人员确保多样性，避免重复。
+
+---
+
+### 应用功能完整性测试计划 (表格版)
+
+| 分类 | 测试项 | 状态 | 操作步骤 | 预期结果 |
+| :--- | :--- | :--- | :--- | :--- |
+| **初始化与数据验证** | **1.1 城市切换** | `[ ]` | 1. 在侧边栏切换不同城市（成都、重庆、贵阳）。 | 1. 页面正常加载，不报错。<br>2. "Mission Overview" 指标和 "Select Test Station" 列表根据所选城市更新。 |
+| | **1.2 按天筛选** | `[ ]` | 1. 选择一个城市。<br>2. 在侧边栏切换不同日期（All, Day 1, Day 2...）。 | 1. "Today's Test Plan" 指标更新。<br>2. "Select Test Station" 和 "Daily Target List" 中的站点列表根据所选日期筛选。 |
+| | **1.3 UC02 标志验证** | `[ ]` | 1. 浏览 "Daily Target List"。 | 1. 对于 `max_dc_power` > 151.2 kW 的充电站，其 "Features" 列应显示 `🌡️🔋 vWM` 图标。 |
+| **核心功能** | **2.1 空表单检查** | `[ ]` | 1. 选择一个测试站点。<br>2. **不填写任何信息**。 | 1. "Submit Record" 按钮为灰色，不可点击。 |
+| | **2.2 完整提交流程** | `[ ]` | 1. 选择一个站点。<br>2. 完整填写所有字段（Use Case, CPO Name, 充电桩信息等）。<br>3. 点击 "Record Start Time" 和 "Record End Time"。 | 1. 时间输入框显示当前东八区时间。<br>2. "Submit Record" 按钮变为可点击。 |
+| | **2.3 照片拍摄** | `[ ]` | 1. 按照提示，依次完成 4 张照片的拍摄。<br>2. 拍摄完成后，点击 "重新拍摄所有照片"。 | 1. 每拍完一张，自动进入下一步。<br>2. 页面下方显示照片预览。<br>3. 点击 "重新拍摄" 后，流程重置，旧照片清空。 |
+| | **2.4 提交与重置** | `[ ]` | 1. 完成所有信息填写和照片拍摄后，点击 "Submit Record"。 | 1. 显示 "Record saved successfully!" 提示。<br>2. 整个表单被自动清空，恢复初始状态。 |
+| **数据验证与导出** | **3.1 文件生成验证** | `[ ]` | 1. 提交一次记录后，检查项目文件夹。 | 1. `mission_test_records.csv` 末尾增加一行新记录。<br>2. `images/structured/` 下创建 `城市代码_CPO_序号` 文件夹，内含 4 张照片和 1 个 `meta.json`。 |
+| | **3.2 打包下载** | `[ ]` | 1. 点击 "Prepare Full Archive for Download"。<br>2. 点击 "Download Full Archive (ZIP)"。<br>3. 解压下载的 `.zip` 文件。 | 1. 成功下载包含时间戳的 `.zip` 文件。<br>2. 解压后，内容与本地生成的 `mission_test_records.csv` 和 `images/structured/` 文件夹一致。 |
+| **Use Case 场景** | **4.1 UC01 仪表盘** | `[ ]` | 1. 选择 `UC01` Use Case，提交几条 AC 和 DC 的记录。<br>2. 切换到 "All" 或当天日期查看 "UC01 Daily Task Dashboard"。 | 1. "DC/AC Charging Progress" 计数正确增加。<br>2. "End Method Tracking Matrix" 中对应的单元格根据测试结果显示 `✅` 或 `❌`。 |
+| | **4.2 UC02 流程** | `[ ]` | 1. 在 "Daily Target List" 中选择一个带 `🌡️🔋 vWM` 标志的站点。<br>2. Use Case 选择 `UC02`，完成一次提交流程。 | 1. 记录能够被成功提交并保存到 `mission_test_records.csv` 中。 |
+
+---

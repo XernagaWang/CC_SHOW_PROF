@@ -537,16 +537,6 @@ with st.expander("On-site Test Log Input", expanded=True):
             rerun()
             # st.rerun()
             rerun()
-
-        # This download button is now moved to the sidebar for better organization
-        # if os.path.isfile("mission_test_records.csv"):
-        #     with open("mission_test_records.csv", "rb") as f:
-        #         st.download_button(
-        #             "Download All Test Records (CSV)",
-        #             f,
-        #             file_name="mission_test_records.csv",
-        #             mime="text/csv"
-        #         )
     else:
         st.info("No test stations available for the current selection.")
 
@@ -556,6 +546,12 @@ def generate_ditu_navi_link(row):
     url = (f"https://ditu.amap.com/dir?type=car&policy=2&to%5Bname%5D={to_name}&to%5Blnglat%5D={to_lnglat}&src=yourAppName")
     return url
 
+# This dataframe for the navi list must be defined *before* the expander
+# to ensure it's correctly filtered when the page reruns on day selection.
+filtered_navi_df = filtered_report_df[
+    ~filtered_report_df['目的地'].astype(str).str.contains('完成測試')
+]
+
 with st.expander("Daily Target List (Click to expand)", expanded=False):
     # Adjust column ratios for the new "Features" column
     header_cols = st.columns([1, 1, 4, 2])
@@ -564,10 +560,6 @@ with st.expander("Daily Target List (Click to expand)", expanded=False):
     header_cols[2].markdown("**Target Station**")
     header_cols[3].markdown("**Navi QR Code**")
     st.markdown("---")
-
-    filtered_navi_df = filtered_report_df[
-        ~filtered_report_df['目的地'].astype(str).str.contains('完成測試')
-    ]
 
     for idx, row in filtered_navi_df.iterrows():
         navi_url = generate_ditu_navi_link(row)
@@ -579,8 +571,6 @@ with st.expander("Daily Target List (Click to expand)", expanded=False):
         
         # Check if the station is a UC2 candidate and display an icon in the new column
         is_uc2 = all_stations_df.loc[all_stations_df['station_name'] == station_name, 'UC2'].values
-        # print(f"UC2 value: {is_uc2}")
-        # print(all_stations_df['name'])
         if len(is_uc2) > 0 and int(is_uc2[0]) == 1:
             cols[1].write("🌡️🔋 vWM") # Display icon in the "Features" column
         else:
@@ -591,7 +581,7 @@ with st.expander("Daily Target List (Click to expand)", expanded=False):
         if cols[3].button("Generate QR Code", key=f"qr_btn_{idx}"):
             st.session_state['current_qr_url'] = navi_url
             st.session_state['current_station_name'] = station_name # Store name for display
-
+            
 st.sidebar.header("Navigation QR Code")
 
 if 'current_qr_url' in st.session_state:
@@ -751,7 +741,11 @@ with st.expander("Raw Test Records Log (mission_test_records.csv)"):
         try:
             raw_df = pd.read_csv(record_file)
             if not raw_df.empty:
-                st.dataframe(raw_df)
+                # Convert object columns to string to prevent LargeUtf8 error on Streamlit Cloud
+                for col in raw_df.columns:
+                    if raw_df[col].dtype == 'object':
+                        raw_df[col] = raw_df[col].astype("str")
+                st.dataframe(raw_df, use_container_width=True)
             else:
                 st.info("The record file is empty.")
         except pd.errors.EmptyDataError:
