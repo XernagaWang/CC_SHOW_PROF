@@ -1,5 +1,0 @@
-City,Day,Date,Station,Use Case,Status,CPO Name,Manufacturer,MODEL,Voltage(V),Current(A),Power(kW),Start Method,Start Method_Other,Has_12A_24A,Start Time,Start SoC(%),End Time,End SoC(%),End Method,End Method_Other,End Reason,End Reason_Other,Test Result,Error Describe,Error Describe_Other,Remark
-成都,1,2026-03-06,无诤摩方购物中心充电站,UC01_CC_DC_AC_Sessions,Normal Test,test,123,AC,,,,Scan QR Code,,True,2026-03-06 14:58:25,,2026-03-06 14:58:26,,Target SOC,,Manual Stop,,Pass,None,,
-成都,1,2026-03-06,无诤摩方购物中心充电站,UC01_CC_DC_AC_Sessions,Normal Test,,,,,,,Scan QR Code,,True,,,,,Target SOC,,Manual Stop,,None,None,,
-成都,2,2026-03-06,蓝电快充运贸充电站,UC01_CC_DC_AC_Sessions,Normal Test,aaaaa,,AC,,,,Scan QR Code,,True,2026-03-06 15:00:28,,2026-03-06 15:00:26,,Target SOC,,Manual Stop,,Pass,None,,
-成都,2,2026-03-06,蓝电快充运贸充电站,UC01_CC_DC_AC_Sessions,Normal Test,,,DC,,,,Scan QR Code,,True,2026-03-06 15:01:05,,2026-03-06 15:01:04,,APP,,Manual Stop,,Pass,None,,
