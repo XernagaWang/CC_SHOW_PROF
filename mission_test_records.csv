@@ -1,0 +1,2 @@
+﻿City,Day,Date,Station,Use Case,Status,CPO Name,Manufacturer,MODEL,Voltage(V),Current(A),Power(kW),Start Method,Start Method_Other,Has_12A_24A,Start Time,Start SoC(%),End Time,End SoC(%),End Method,End Method_Other,End Reason,End Reason_Other,Test Result,Error Describe,Error Describe_Other,Remark
+成都,All,2026-03-07,无诤摩方购物中心充电站,UC01_CC_DC_AC_Sessions,Normal Test,TEST,123,AC,123,123,123,Scan QR Code,,True,,,,,Target SOC,,Manual Stop,,Pass,None,,

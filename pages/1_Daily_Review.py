@@ -17,23 +17,31 @@ st.title("Daily Review")
 def load_log_data():
     """加载路测日志数据"""
     try:
-        log_df = pd.read_excel("log_book_final.xlsx")
+        # --- 修改：读取新的CSV文件 ---
+        log_df = pd.read_csv("mission_test_records.csv")
         log_df.columns = log_df.columns.str.strip()
 
-        # --- 新增：兼容中文列名 ---
-        if '日期' in log_df.columns:
-            log_df.rename(columns={'日期': 'Date'}, inplace=True)
-        # --- 结束新增部分 ---
+        # --- 修改：列名映射 ---
+        rename_map = {
+            'Station': '站點',
+            'CPO_Name': 'CPO Name',
+            'Test Result': '測試結果',
+            'Status': '狀態',
+            'Remark': '備註',
+            'Location': 'Loacation', # 保持 'Loacation' 以兼容后续处理
+            'Use_Case': 'Use Case'
+        }
+        log_df.rename(columns=rename_map, inplace=True)
+        # --- 结束修改 ---
 
         # 标准化列，处理可能存在的空格
-        for col in ['測試結果', '狀態', '站點', 'CPO Name', '备注', 'Loacation']:
+        for col in ['測試結果', '狀態', '站點', 'CPO Name', '備註', 'Loacation']:
             if col in log_df.columns:
                 log_df[col] = log_df[col].astype(str).str.strip()
         
         if 'Date' in log_df.columns:
             log_df['Date'] = pd.to_datetime(log_df['Date'], errors='coerce')
 
-        # --- 新增：处理 Loacation 列 ---
         # --- 新增：处理 Loacation 列 ---
         if 'Loacation' in log_df.columns:
             # 替换中文逗号为英文逗号，并分割
@@ -43,30 +51,14 @@ def load_log_data():
                 log_df['longitude'] = pd.to_numeric(split_loc[0], errors='coerce')
                 log_df['latitude'] = pd.to_numeric(split_loc[1], errors='coerce')
 
-        # --- 【关键步骤】保存处理好的数据 ---
-        PROCESSED_FILE = "processed_records.csv"
-        try:
-            log_df.to_csv(PROCESSED_FILE, index=False, encoding='utf-8-sig')
-            # st.sidebar.success(f"数据已处理并保存至 '{PROCESSED_FILE}'")
-        except Exception as e:
-            st.sidebar.error(f"保存处理后文件失败: {e}")
-
-        # --- 结束新增部分 ---
-
         if 'latitude' in log_df.columns and 'longitude' in log_df.columns:
             log_df['latitude'] = pd.to_numeric(log_df['latitude'], errors='coerce')
             log_df['longitude'] = pd.to_numeric(log_df['longitude'], errors='coerce')
             log_df.dropna(subset=['latitude', 'longitude'], inplace=True)
         
-        # # --- 调试代码 ---
-        # st.write("### 调试信息：处理后的数据预览")
-        # st.write(log_df.head())
-        # st.info("请检查上方表格中 `latitude` 和 `longitude` 列是否包含有效数值。")
-        # # --- 调试代码结束 ---
-
         return log_df
     except FileNotFoundError:
-        st.error("错误：找不到 `log_book_final.xlsx` 文件。请确保该文件位于项目根目录。")
+        st.error("错误：找不到 `mission_test_records.csv` 文件。请确保该文件位于项目根目录。")
 
 # 定义品牌分类
 EMO_CPO = ['比亚迪', '小米', '蔚来', 'NIO', '理想', '特斯拉', '小鹏', '广汽能源', '路特斯', "ZEEKR"]
@@ -108,7 +100,7 @@ if 'Date' in log_df.columns and not log_df['Date'].isnull().all():
 else:
     st.sidebar.warning("Date column not found or is empty. \nCannot filter by date.")
 
-
+print("THIS IS COLUMNS:", log_df.columns) # 调试：打印列名，确认正确加载和重命名
 if log_df is None or '站點' not in log_df.columns or '狀態' not in log_df.columns or 'CPO Name' not in log_df.columns:
     st.error("数据加载失败，或缺少 '站點' / '狀態' / 'CPO Name' 关键列，无法继续分析。")
     st.stop()
@@ -119,13 +111,13 @@ total_unique_stations = log_df['站點'].nunique()
 total_unique_cpos = log_df['CPO Name'].nunique()
 
 # 2. 测试次数 (Charge Sessions) 相关统计
-testable_records_df = log_df[log_df['狀態'] == '正常測試']
+testable_records_df = log_df[log_df['狀態'] == 'Normal Test'] # 修改：匹配 'Normal Test'
 charge_session_counts = log_df['站點'].shape[0]
 success_records_count = (testable_records_df['測試結果'] == 'Pass').sum()
 failed_records_count = (testable_records_df['測試結果'] == 'Failed').sum()
 
 # 3. 无法测试相关统计
-untestable_df = log_df[log_df['狀態'] != '正常測試']
+untestable_df = log_df[log_df['狀態'] != 'Normal Test'] # 修改：匹配 'Normal Test'
 untestable_records_count = untestable_df.shape[0] # 新增：无法测试的记录数
 untestable_station_count = untestable_df['站點'].nunique()
 
