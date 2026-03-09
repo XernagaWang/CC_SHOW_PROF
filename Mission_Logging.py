@@ -463,7 +463,7 @@ with st.expander("On-site Test Log Input", expanded=True):
                     label=f"拍摄 {current_step_info['prompt']}", 
                     key=f"camera_{current_step_info['key']}",
                     help="如果无法开启后置摄像头，请在浏览器权限设置中允许访问摄像头。",
-                    constraints=camera_constraints # This is an experimental feature
+                    # constraints=camera_constraints # This is an experimental feature
                 )
                 if uploaded_photo is not None:
                     st.session_state.photo_data[current_step_info['key']] = {
