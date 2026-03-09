@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camera Capability Tester</title>
+    <style>
+        body { font-family: sans-serif; padding: 2em; line-height: 1.6; }
+        #device-list { border: 1px solid #ccc; padding: 1em; margin-top: 1em; border-radius: 5px; background-color: #f9f9f9; }
+        h1, h2 { color: #333; }
+        code { background-color: #eee; padding: 2px 4px; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <h1>Camera Capability Tester</h1>
+    <p>This page helps you check which cameras your browser can detect on this device.</p>
+    <button id="check-button">1. Click here to start test</button>
+    
+    <h2>Detected Video Devices:</h2>
+    <div id="device-list">
+        <p>Waiting for test to start...</p>
+    </div>
+
+    <script>
+        const checkButton = document.getElementById('check-button');
+        const deviceList = document.getElementById('device-list');
+
+        checkButton.onclick = async () => {
+            deviceList.innerHTML = '<p>Requesting camera permissions...</p>';
+            
+            try {
+                // Request permission by asking for a stream. We don't need to use the stream,
+                // but this triggers the permission prompt.
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+
+                // Stop the stream immediately after getting permission
+                stream.getTracks().forEach(track => track.stop());
+
+                deviceList.innerHTML = '<p>Permissions granted. Enumerating devices...</p>';
+
+                // Now, enumerate all devices
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const videoDevices = devices.filter(device => device.kind === 'videoinput');
+
+                if (videoDevices.length > 0) {
+                    let html = `Found <strong>${videoDevices.length}</strong> camera(s):<ul>`;
+                    videoDevices.forEach((device, index) => {
+                        html += `<li>
+                            <strong>Camera ${index + 1}:</strong>
+                            <ul>
+                                <li>Label: <code>${device.label || 'No label available'}</code></li>
+                                <li>Device ID: <code>${device.deviceId}</code></li>
+                            </ul>
+                        </li>`;
+                    });
+                    html += '</ul>';
+                    deviceList.innerHTML = html;
+                } else {
+                    deviceList.innerHTML = '<p><strong>No video devices found.</strong> The browser cannot detect any cameras.</p>';
+                }
+
+            } catch (err) {
+                console.error("Error accessing media devices.", err);
+                let errorMessage = `<p><strong>Error:</strong> ${err.name} - ${err.message}</p>`;
+                if (err.name === "NotAllowedError") {
+                    errorMessage += "<p>You denied the camera permission. Please allow camera access in your browser settings and try again.</p>";
+                } else if (err.name === "NotFoundError") {
+                    errorMessage += "<p>No camera could be found on this device that satisfies the request.</p>";
+                }
+                deviceList.innerHTML = errorMessage;
+            }
+        };
+    </script>
+</body>
+</html>

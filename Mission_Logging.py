@@ -455,9 +455,15 @@ with st.expander("On-site Test Log Input", expanded=True):
             st.session_state.camera_ready = st.checkbox("📷 准备拍照", key=f"cam_ready_{current_step_info['key']}")
 
             if st.session_state.camera_ready:
+                # Try to default to the rear camera
+                camera_constraints = {
+                    "video": {"facingMode": "environment"}
+                }
                 uploaded_photo = st.camera_input(
                     label=f"拍摄 {current_step_info['prompt']}", 
-                    key=f"camera_{current_step_info['key']}"
+                    key=f"camera_{current_step_info['key']}",
+                    help="如果无法开启后置摄像头，请在浏览器权限设置中允许访问摄像头。",
+                    # constraints=camera_constraints # This is an experimental feature
                 )
                 if uploaded_photo is not None:
                     st.session_state.photo_data[current_step_info['key']] = {
