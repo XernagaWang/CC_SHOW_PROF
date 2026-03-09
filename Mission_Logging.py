@@ -457,7 +457,8 @@ with st.expander("On-site Test Log Input", expanded=True):
             if st.session_state.camera_ready:
                 # Try to default to the rear camera
                 camera_constraints = {
-                    "video": {"facingMode": "environment"}
+                    # "video": {"facingMode": "environment"}
+                    "video": {"facingMode": "user"} # <-- "environment" is rear camera, "user" is front camera. Adjust as needed.
                 }
                 uploaded_photo = st.camera_input(
                     label=f"拍摄 {current_step_info['prompt']}", 
