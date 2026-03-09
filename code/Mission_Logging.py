@@ -448,23 +448,33 @@ with st.expander("On-site Test Log Input", expanded=True):
         current_step_index = st.session_state.photo_step
         if current_step_index < len(PHOTO_SEQUENCE):
             current_step_info = PHOTO_SEQUENCE[current_step_index]
-            st.info("📷 **拍照/上傳提示**: 請點擊下方按鈕開啟相機，或從相簿選擇照片。")
+            st.info("📷 **拍照提示**: 请将手机横置拍摄，确保画面清晰、完整。")
             st.write(f"**{current_step_info['prompt']}**")
 
-            # Use file_uploader to allow both camera capture and file upload on mobile
-            uploaded_photo = st.file_uploader(
-                label=f"上傳或拍攝 {current_step_info['prompt']}",
-                type=['png', 'jpg', 'jpeg'],
-                key=f"uploader_{current_step_info['key']}"
-            )
+            # Checkbox to activate the camera
+            st.session_state.camera_ready = st.checkbox("📷 准备拍照", key=f"cam_ready_{current_step_info['key']}")
 
-            if uploaded_photo is not None:
-                st.session_state.photo_data[current_step_info['key']] = {
-                    "data": uploaded_photo,
-                    "filename": current_step_info['filename']
+            if st.session_state.camera_ready:
+                # Try to default to the rear camera
+                camera_constraints = {
+                    # "video": {"facingMode": "environment"}
+                    "video": {"facingMode": "user"} # <-- "environment" is rear camera, "user" is front camera. Adjust as needed.
                 }
-                st.session_state.photo_step += 1
-                rerun()
+                uploaded_photo = st.camera_input(
+                    label=f"拍摄 {current_step_info['prompt']}", 
+                    key=f"camera_{current_step_info['key']}",
+                    help="如果无法开启后置摄像头，请在浏览器权限设置中允许访问摄像头。",
+                    # constraints=camera_constraints # This is an experimental feature
+                )
+                if uploaded_photo is not None:
+                    st.session_state.photo_data[current_step_info['key']] = {
+                        "data": uploaded_photo,
+                        "filename": current_step_info['filename']
+                    }
+                    st.session_state.photo_step += 1
+                    # Reset the checkbox state before rerunning
+                    st.session_state.camera_ready = False
+                    rerun()
 
         if len(st.session_state.photo_data) > 0:
             st.write("---")
