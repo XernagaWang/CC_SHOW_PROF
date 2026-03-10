@@ -141,3 +141,14 @@
 | | **4.2 UC02 流程** | `[ ]` | 1. 在 "Daily Target List" 中选择一个带 `🌡️🔋 vWM` 标志的站点。<br>2. Use Case 选择 `UC02`，完成一次提交流程。 | 1. 记录能够被成功提交并保存到 `mission_test_records.csv` 中。 |
 
 ---
+
+## 功能優化與使用者體驗
+
+- **1. 為拍照步驟添加示意圖**
+  - **任務描述**: 在拍照/上傳的預覽區，為尚未拍攝的步驟顯示示意圖，引導使用者拍攝正確的照片。
+  - **具體步驟**:
+        1.  在 `images/` 資料夾下建立一個 `examples/` 子資料夾。
+        2.  請設計師 (Banana) 產生四張示意圖 (例如 `example_pile_left.png`, `example_pile_right.png` 等) 並放入 `images/examples/`。
+        3.  修改 `Mission_Logging.py` 中的 `PHOTO_SEQUENCE`，為每個項目增加 `example_image` 欄位。
+        4.  更新照片預覽區的邏輯，當 `st.session_state.photo_data` 中沒有對應照片時，使用 `st.image()` 顯示 `example_image` 路徑的圖片。
+

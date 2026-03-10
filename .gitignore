@@ -10,3 +10,6 @@ pip-selfcheck.json
 
 # VSCode
 .vscode/
+
+# Custom
+Day/
