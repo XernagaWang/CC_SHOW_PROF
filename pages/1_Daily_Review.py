@@ -18,7 +18,8 @@ def load_log_data():
     """加载路测日志数据"""
     try:
         # --- 修改：读取新的CSV文件 ---
-        log_df = pd.read_csv("mission_test_records.csv")
+        # log_df = pd.read_csv("mission_test_records.csv")
+        log_df = pd.read_excel("Logbook_2026.xlsx", ) # 修改：读取Excel文件
         log_df.columns = log_df.columns.str.strip()
 
         # --- 修改：列名映射 ---

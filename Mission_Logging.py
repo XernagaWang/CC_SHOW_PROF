@@ -204,9 +204,9 @@ def load_data(city_prefix):
             all_stations_df.to_csv(stations_path, index=False, encoding='utf-8-sig')
             print(f"Successfully processed and updated {stations_path}")
         # --- End UC2 Logic ---
-
+# 
         if os.path.exists('mission_test_records.csv'):
-            records_df = pd.read_csv('mission_test_records.csv')
+            records_df = pd.read_excel("Logbook_2026.xlsx", )
         else:
             records_df = pd.DataFrame(columns=['Date', 'City', 'Station Name', 'MODEL', 'Result', 'User'])
     except FileNotFoundError as e:
@@ -219,7 +219,7 @@ def create_zip_archive():
     zip_buffer = BytesIO()
     
     img_source_dir = "images/structured"
-    csv_source_file = "mission_test_records.csv"
+    csv_source_file = "Logbook_2026.xlsx"
 
     with zipfile.ZipFile(zip_buffer, 'a', zipfile.ZIP_DEFLATED, False) as zip_file:
         # Add all images
@@ -683,12 +683,12 @@ def get_daily_summary():
     """
     Generates a summary of AC/DC charges per day for UC01.
     """
-    record_file = "mission_test_records.csv"
+    record_file = "Logbook_2026.xlsx"
     if not os.path.exists(record_file):
         return pd.DataFrame(columns=["AC", "DC"])
 
     try:
-        df = pd.read_csv(record_file)
+        df = pd.read_excel(record_file)
         uc01_df = df[df["Use Case"] == "UC01_CC_DC_AC_Sessions"].copy()
         if uc01_df.empty:
             return pd.DataFrame(columns=["AC", "DC"])
@@ -732,11 +732,11 @@ st.markdown("---") # Add a separator
 
 # --- Raw Data Viewer ---
 st.markdown("---")
-with st.expander("Raw Test Records Log (mission_test_records.csv)"):
-    record_file = "mission_test_records.csv"
+with st.expander("Raw Test Records Log (Logbook_2026.xlsx)"):
+    record_file = "Logbook_2026.xlsx"
     if os.path.exists(record_file):
         try:
-            raw_df = pd.read_csv(record_file)
+            raw_df = pd.read_excel(record_file)
             if not raw_df.empty:
                 # Convert object columns to string to prevent LargeUtf8 error on Streamlit Cloud
                 for col in raw_df.columns:
@@ -750,4 +750,4 @@ with st.expander("Raw Test Records Log (mission_test_records.csv)"):
         except Exception as e:
             st.error(f"Could not read the record file: {e}")
     else:
-        st.info("No records have been saved yet (`mission_test_records.csv` not found).")
+        st.info("No records have been saved yet (`Logbook_2026.xlsx` not found).")
