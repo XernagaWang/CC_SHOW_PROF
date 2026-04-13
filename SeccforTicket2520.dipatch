@@ -1,0 +1,68 @@
+diff --git a/source/config/inc/global.h b/source/config/inc/global.h
+index 1d5b6be..f13a4e6 100755
+--- a/source/config/inc/global.h
++++ b/source/config/inc/global.h
+@@ -81,8 +81,8 @@
+ 
+ /*固件版本控制*/
+ //#define SECC_VERSION "BWM_V1.0.0.240326_Release"
+-#define SECC_VERSION "secc version V1.1.23.0148"
+-#define SECC_VERSION_GIT "V1.0.30.0148"
++#define SECC_VERSION "secc version V1.1.23.0149"
++#define SECC_VERSION_GIT "V1.0.30.0149_B"
+ 
+ #define ISO_151158_UDP_PORT        15118
+ #define ISO_151158_TCP_PORT        50001
+@@ -309,6 +309,7 @@
+   secc version V1.0.30.0146  1.  modify code to reduce log content
+   secc version V1.0.30.0147  1.  add log to record subversion
+   secc version V1.0.30.0148  1.  add log to track the number of EVPowerProfile entries in dynamic mode
++  secc version V1.0.30.0149  1.  fix the bug of Ticket2520(Not synchronizing EVSE capability parameters during the CPD phase)
+ 
+   ***************/
+ 
+diff --git a/source/evse/src/TableEvse.cpp b/source/evse/src/TableEvse.cpp
+index a1dd9e1..9fccaa1 100755
+--- a/source/evse/src/TableEvse.cpp
++++ b/source/evse/src/TableEvse.cpp
+@@ -1795,10 +1795,13 @@ int TableEvse::EventAuthorizationReq(const char *id, const unsigned char *pGenCh
+     int nRet = EvseInterface::EventAuthorizationReq(id, pGenChallenge);
+     //if (nRet < 0) return nRet;
+ 
++    //+hmf 20260318 会话恢复时按照正常流程处理，由EVSE控制流程结束，SECC不做特殊处理
++    #if 0
+     if (m_pSession->SessionStatus() == kSessionResumed  ) {
+         SetEVSEProcessing(kEVSEProcessingType_Finished);
+         return nRet;
+     }
++    #endif
+ #if 0
+     if (m_pSession->PaymentOption() == EM_PAYMENT_CONTRACT /*|| IsEIMDone() */) {
+         #ifdef VERISCO_TEST_SUPPORT //verisco test [DIN TC_SECC_VTB_ContractAuthentication_006]
+@@ -1856,10 +1859,13 @@ int TableEvse::EventEd2AuthorizationReq(const char *id)
+     int nRet = EvseInterface::EventEd2AuthorizationReq(id);
+     //if (nRet < 0) return nRet;
+ 
++    //+hmf 20260318 会话恢复时按照正常流程处理，由EVSE控制流程结束，SECC不做特殊处理
++    #if 0
+     if (m_pSession->SessionStatus() == kSessionResumed  ) {
+         SetEVSEProcessing(kEVSEProcessingType_Finished);
+         return nRet;
+     }
++    #endif
+ 
+     // if (m_pSession->PaymentOption() == EM_PAYMENT_CONTRACT || IsEIMDone()) {
+     //     SetEVSEProcessing(kEVSEProcessingType_Finished);
+@@ -2065,9 +2071,12 @@ int TableEvse::EventChargeParameterDiscoveryReq()
+ 
+     m_SaScheduleList.AddSchedule(pSch);
+ 
++    //+hmf 20260318 会话恢复时按照正常流程处理，由EVSE控制流程结束，SECC不做特殊处理
++    #if 0
+     if (m_pSession->SessionStatus() == kSessionResumed  ) {
+         SetEVSEProcessing(kEVSEProcessingType_Finished);
+     }
++    #endif
+ 
+     if (EVSEProcessing() == kEVSEProcessingType_Finished)
+         DumpEVSEChargeParameter();
