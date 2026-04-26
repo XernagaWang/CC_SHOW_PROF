@@ -3,12 +3,12 @@ altair<5.0
 folium
 numpy
 openpyxl
-pandas==2.2.2
+pandas
 Pillow
 plotly
 pydeck
 qrcode
-pyarrow==15.0.2
+pyarrow
 streamlit
 dotenv
 watchdog
