@@ -13,3 +13,5 @@ pip-selfcheck.json
 
 # Custom
 Day/
+
+.DS_Store

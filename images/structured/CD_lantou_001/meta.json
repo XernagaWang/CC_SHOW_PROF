@@ -1,0 +1,11 @@
+{
+  "station_id": "CD_lantou_001",
+  "station_name_original": "\u6210\u90fd\u62db\u5546\u5927\u9b54\u65b9\u5145\u96fb\u7ad9",
+  "photos": {
+    "pile_left": "pile_left.png",
+    "pile_right": "pile_right.png",
+    "gun": "gun.png",
+    "plate": "plate.png"
+  },
+  "last_updated": "2026-03-12T18:12:03.814418+08:00"
+}

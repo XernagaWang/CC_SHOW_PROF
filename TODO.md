@@ -1,3 +1,23 @@
+# TODO for Dashboard Development
+
+- [ ] **(P0) Implement Core KPIs on Dashboard**:
+  - Total Tests
+  - Unique Stations Tested
+  - Overall Pass Rate
+  - Cities Covered
+  - Total DC/AC Charges
+- [ ] **(P0) Implement Failure Analysis Charts**:
+  - Bar chart for failure reasons based on 'Status' and 'Test Result' columns.
+  - Pie chart for failure source (Infrastructure vs. Vehicle), requires mapping 'Status' to source.
+- [ ] **(P1) Add Interactive Filters**:
+  - Filters for City, Date Range, Test Result, CPO Name.
+- [ ] **(P2) Address Geodata Prerequisite for Maps**:
+  - Devise a strategy to add Latitude/Longitude to all records in `Logbook_2026.xlsx`.
+  - This is a blocker for any map-based visualizations.
+- [ ] **(P2) Implement Hexagon Grid Map on a "Plan" Page**:
+  - As discussed, this feature is best suited for a future "Plan" page to guide test planning.
+  - It requires the geodata prerequisite above and a master list of all national CPOs.
+
 # 待办：照片整理与展示（生成 2026-02-28）
 
 1. 创建样例索引 `images/index.csv` 与城市/CPO 映射模板 `city_cpo_mapping.csv`（已创建示例文件）。
@@ -151,4 +171,3 @@
         2.  請設計師 (Banana) 產生四張示意圖 (例如 `example_pile_left.png`, `example_pile_right.png` 等) 並放入 `images/examples/`。
         3.  修改 `Mission_Logging.py` 中的 `PHOTO_SEQUENCE`，為每個項目增加 `example_image` 欄位。
         4.  更新照片預覽區的邏輯，當 `st.session_state.photo_data` 中沒有對應照片時，使用 `st.image()` 顯示 `example_image` 路徑的圖片。
-

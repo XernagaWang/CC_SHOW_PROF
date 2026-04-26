@@ -1,0 +1,11 @@
+{
+  "station_id": "CD_wu_hou_shang_cheng_001",
+  "station_name_original": "\u60e0\u7a0b\u79d1\u6280\u6c7d\u8f66\u5145\u7535\u7ad9(\u5546\u7a0b\u65b0\u80fd\u6e90\u6b66\u4faf\u533a\u6c34\u97f5\u56ed)",
+  "photos": {
+    "pile_left": "pile_left.png",
+    "pile_right": "pile_right.png",
+    "gun": "gun.png",
+    "plate": "plate.png"
+  },
+  "last_updated": "2026-03-11T16:07:44.617885+08:00"
+}

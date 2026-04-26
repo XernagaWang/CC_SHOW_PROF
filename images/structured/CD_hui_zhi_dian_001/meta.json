@@ -1,0 +1,11 @@
+{
+  "station_id": "CD_hui_zhi_dian_001",
+  "station_name_original": "\u6b66\u4faf\u5546\u7a0b\u8d85\u5145\u7ad9",
+  "photos": {
+    "pile_left": "pile_left.png",
+    "pile_right": "pile_right.png",
+    "gun": "gun.png",
+    "plate": "plate.png"
+  },
+  "last_updated": "2026-03-10T18:57:37.435801+08:00"
+}

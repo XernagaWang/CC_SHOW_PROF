@@ -1,0 +1,11 @@
+{
+  "station_id": "CD_kstar_001",
+  "station_name_original": "\u65b0\u7535\u9014\u6c7d\u8f66\u5145\u7535\u7ad9(\u58f9\u7535\u8700\u798f\u5361\u5145\u7535\u7ad9)",
+  "photos": {
+    "pile_left": "pile_left.png",
+    "pile_right": "pile_right.png",
+    "gun": "gun.png",
+    "plate": "plate.png"
+  },
+  "last_updated": "2026-03-11T12:35:34.587272+08:00"
+}

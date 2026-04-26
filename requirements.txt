@@ -10,6 +10,6 @@ pydeck
 qrcode
 pyarrow==15.0.2
 streamlit
-dotenv
+python-dotenv
 watchdog
 streamlit_folium

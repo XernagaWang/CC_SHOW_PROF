@@ -1,0 +1,11 @@
+{
+  "station_id": "CD_yi_qian_001",
+  "station_name_original": "\u84b2\u6c5f\u4ebf\u8c26\u5145\u7535\u7ad93\u53f7\u6869",
+  "photos": {
+    "pile_left": "pile_left.png",
+    "pile_right": "pile_right.png",
+    "gun": "gun.png",
+    "plate": "plate.png"
+  },
+  "last_updated": "2026-03-09T14:41:43.686603+08:00"
+}
