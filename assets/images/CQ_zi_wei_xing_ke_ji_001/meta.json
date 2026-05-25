@@ -1,0 +1,11 @@
+{
+  "station_id": "CQ_zi_wei_xing_ke_ji_001",
+  "station_name_original": "\u4e0a\u6d77\u57ce\u7d2b\u5fae\u661f\u8d85\u7ea7\u5145\u7535\u7ad9",
+  "photos": {
+    "pile_left": "pile_left.png",
+    "pile_right": "pile_right.png",
+    "gun": "gun.png",
+    "plate": "plate.png"
+  },
+  "last_updated": "2026-03-15T11:36:17.119148+08:00"
+}

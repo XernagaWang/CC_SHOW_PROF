@@ -1,0 +1,11 @@
+{
+  "station_id": "CD_zeeker_001",
+  "station_name_original": "\u6781\u6c2a\u80fd\u6e90\u8d85\u7ea7\u5145\u7535\u7ad9(\u6210\u90fd\u51ef\u65cb\u5357\u57ce\u8d85\u5145\u7ad9)",
+  "photos": {
+    "pile_left": "pile_left.png",
+    "pile_right": "pile_right.png",
+    "gun": "gun.png",
+    "plate": "plate.png"
+  },
+  "last_updated": "2026-03-11T19:08:43.813445+08:00"
+}

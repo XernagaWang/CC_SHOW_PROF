@@ -1,0 +1,10 @@
+{
+  "station_id": "CQ_zhong_qing_neng_yuan_001",
+  "station_name_original": "\u91cd\u5e86\u80fd\u6295\u4e91\u6749\u667a\u6167\u53cc\u9f99\u8def\u5145\u7535\u7ad9",
+  "photos": {
+    "pile_left": "pile_left.png",
+    "pile_right": "pile_right.png",
+    "gun": "gun.png"
+  },
+  "last_updated": "2026-03-17T12:20:52.721032+08:00"
+}

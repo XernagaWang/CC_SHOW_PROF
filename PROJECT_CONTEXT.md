@@ -28,6 +28,7 @@
 
 - **定位**：負責讀取 `LOGBOOK` 所產出的 `Logbook_2026.xlsx`（以及未來的相片與日誌集），透過可視化圖表 (Data Visualization，如 Plotly / Altair 等工具) 將測試結果精煉展示出來。
 - **目標**：透過清晰的看板呈現出：「哪些 CPO 成功率高/低」、「設備發生故障的最大根因是什麼 (損壞、不能導航、APP 崩潰)」、「測試覆蓋度是否達到預期」等 KPI 資訊。
+- **本倉入口**：`streamlit run show_dashboard.py`；目錄與資料路徑見 **`SHOW_STRUCTURE.md`**（原 `charging_list_app` demo 已併入 `assets/`、`data/`，不再單獨運行）。
 
 ---
 

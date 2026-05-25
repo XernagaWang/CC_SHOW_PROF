@@ -1,0 +1,11 @@
+{
+  "station_id": "CD_bai_yuan_zhi_lian_001",
+  "station_name_original": "\u767e\u6e90\u667a\u8054\u5145\u7535\u7ad9(\u6210\u90fd\u5e02\u9f99\u6cc9\u666e\u6d1b\u65af)",
+  "photos": {
+    "pile_left": "pile_left.png",
+    "pile_right": "pile_right.png",
+    "gun": "gun.png",
+    "plate": "plate.png"
+  },
+  "last_updated": "2026-03-11T11:24:02.772600+08:00"
+}

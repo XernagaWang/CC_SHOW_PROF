@@ -1,0 +1,11 @@
+{
+  "station_id": "CD_ling_chong_001",
+  "station_name_original": "\u9886\u5145\u53cc\u6d41\u793a\u8303\u5145\u7535\u7ad9",
+  "photos": {
+    "pile_left": "pile_left.png",
+    "pile_right": "pile_right.png",
+    "gun": "gun.png",
+    "plate": "plate.png"
+  },
+  "last_updated": "2026-03-11T15:38:06.995239+08:00"
+}

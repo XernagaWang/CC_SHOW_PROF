@@ -1,0 +1,11 @@
+{
+  "station_id": "CD_guo_jia_dian_wang_001",
+  "station_name_original": "\u56fd\u5bb6\u7535\u7f51\u6c7d\u8f66\u5145\u7535\u7ad9(\u56db\u5ddd\u7701\u6210\u90fd\u5e02\u9ad8\u65b0\u533a\u5e9c\u57ce\u5927\u9053\u897f\u6bb5355\u53f7\u77f3\u7f8a\u5145\u7535\u7ad9)",
+  "photos": {
+    "pile_left": "pile_left.png",
+    "pile_right": "pile_right.png",
+    "gun": "gun.png",
+    "plate": "plate.png"
+  },
+  "last_updated": "2026-03-12T10:40:06.116761+08:00"
+}

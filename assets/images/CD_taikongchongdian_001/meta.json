@@ -1,0 +1,11 @@
+{
+  "station_id": "CD_taikongchongdian_001",
+  "station_name_original": "\u592a\u7a7a\u5145\u7535\u6c7d\u8f66\u5145\u7535\u7ad9(\u767d\u7f8a\u5ea7\u884c\u661f\u8d85\u80fd\u8231\u6210\u90fd\u6e2f\u6c47\u5929\u5730)",
+  "photos": {
+    "pile_left": "pile_left.png",
+    "pile_right": "pile_right.png",
+    "gun": "gun.png",
+    "plate": "plate.png"
+  },
+  "last_updated": "2026-03-12T11:37:35.165770+08:00"
+}

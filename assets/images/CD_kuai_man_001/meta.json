@@ -1,0 +1,11 @@
+{
+  "station_id": "CD_kuai_man_001",
+  "station_name_original": "\u5feb\u9c3b\u5145\u96fb\u7ad9",
+  "photos": {
+    "pile_left": "pile_left.png",
+    "pile_right": "pile_right.png",
+    "gun": "gun.png",
+    "plate": "plate.png"
+  },
+  "last_updated": "2026-03-13T12:22:17.146739+08:00"
+}

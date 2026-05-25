@@ -1,0 +1,11 @@
+{
+  "station_id": "CD_yun_kuai_chong_001",
+  "station_name_original": "\u4e91\u5feb\u5145\u6c7d\u8f66\u5145\u7535\u7ad9(\u94f6\u6728\u4f73\u82d1\u5145\u7535\u7ad9)",
+  "photos": {
+    "pile_left": "pile_left.png",
+    "pile_right": "pile_right.png",
+    "gun": "gun.png",
+    "plate": "plate.png"
+  },
+  "last_updated": "2026-03-11T10:46:35.696241+08:00"
+}

@@ -1,0 +1,187 @@
+{
+    "page_title": {
+        "zh": "充電站現場勘察日誌",
+        "en": "Charging Station Field Guide",
+        "de": "Feldhandbuch für Ladestationen"
+    },
+    "main_title": {
+        "zh": "充電站現場勘察日誌 (The Field Guide)",
+        "en": "Charging Station Field Guide",
+        "de": "Feldhandbuch für Ladestationen"
+    },
+    "dashboard_header": {
+        "zh": "📈 勘察成果總覽",
+        "en": "📈 Survey Dashboard",
+        "de": "📈 Umfrage-Dashboard"
+    },
+    "total_scouted": {
+        "zh": "已勘察站點總數",
+        "en": "Total Stations Scouted",
+        "de": "Insgesamt untersuchte Stationen"
+    },
+    "successful_stations": {
+        "zh": "完全成功站點數 ✅",
+        "en": "Fully Successful Stations ✅",
+        "de": "Vollständig erfolgreiche Stationen ✅"
+    },
+    "problem_stations": {
+        "zh": "存在問題站點數 ⚠️",
+        "en": "Stations with Issues ⚠️",
+        "de": "Stationen mit Problemen ⚠️"
+    },
+    "search_header": {
+        "zh": "🔍 探索與搜索",
+        "en": "🔍 Explore & Search",
+        "de": "🔍 Erkunden & Suchen"
+    },
+    "search_placeholder": {
+        "zh": "輸入關鍵字搜索 (站點名稱, CPO, Station ID):",
+        "en": "Search by keyword (Station Name, CPO, Station ID):",
+        "de": "Suche nach Schlüsselwort (Stationsname, CPO, Stations-ID):"
+    },
+    "advanced_filter": {
+        "zh": "高級篩選",
+        "en": "Advanced Filters",
+        "de": "Erweiterte Filter"
+    },
+    "city_filter": {
+        "zh": "城市",
+        "en": "City",
+        "de": "Stadt"
+    },
+    "cpo_filter": {
+        "zh": "CPO",
+        "en": "CPO",
+        "de": "CPO"
+    },
+    "records_found": {
+        "zh": "找到 **{count}** 條相關記錄",
+        "en": "Found **{count}** relevant records",
+        "de": "Es wurden **{count}** relevante Datensätze gefunden"
+    },
+    "select_station_prompt": {
+        "zh": "選擇一個站點查看詳細信息:",
+        "en": "Select a station to see details:",
+        "de": "Wählen Sie eine Station aus, um Details anzuzeigen:"
+    },
+    "cpo_caption": {
+        "zh": "CPO: {cpo_name}",
+        "en": "CPO: {cpo_name}",
+        "de": "CPO: {cpo_name}"
+    },
+    "national_share_caption": {
+        "zh": "全國市佔率: {share}%",
+        "en": "National Market Share: {share}%",
+        "de": "Nationaler Marktanteil: {share}%"
+    },
+    "new_discovery_caption": {
+        "zh": "新發現",
+        "en": "New Discovery",
+        "de": "Neue Entdeckung"
+    },
+    "station_id_caption": {
+        "zh": "Station ID: {station_id}",
+        "en": "Station ID: {station_id}",
+        "de": "Stations-ID: {station_id}"
+    },
+    "core_info_header": {
+        "zh": "📋 核心信息",
+        "en": "📋 Core Information",
+        "de": "📋 Kerninformationen"
+    },
+    "latest_test_result": {
+        "zh": "**最新測試結果:** {result}",
+        "en": "**Latest Test Result:** {result}",
+        "de": "**Letztes Testergebnis:** {result}"
+    },
+    "latest_remark": {
+        "zh": "最新備註:",
+        "en": "Latest Remark:",
+        "de": "Neueste Bemerkung:"
+    },
+    "core_specs_header": {
+        "zh": "⚡️ 核心規格",
+        "en": "⚡️ Core Specifications",
+        "de": "⚡️ Kernspezifikationen"
+    },
+    "manufacturer": {
+        "zh": "充電樁製造商",
+        "en": "Pile Manufacturer",
+        "de": "Hersteller der Ladesäule"
+    },
+    "rated_power": {
+        "zh": "額定功率 (kW)",
+        "en": "Rated Power (kW)",
+        "de": "Nennleistung (kW)"
+    },
+    "rated_voltage": {
+        "zh": "額定電壓 (V)",
+        "en": "Rated Voltage (V)",
+        "de": "Nennspannung (V)"
+    },
+    "rated_current": {
+        "zh": "額定電流 (A)",
+        "en": "Rated Current (A)",
+        "de": "Nennstrom (A)"
+    },
+    "aux_power": {
+        "zh": "12V/24V 輔源",
+        "en": "12V/24V Aux Power",
+        "de": "12V/24V Hilfsstrom"
+    },
+    "aux_24v_available": {
+        "zh": "24V Available",
+        "en": "24V Available",
+        "de": "24V verfügbar"
+    },
+    "aux_12v_only": {
+        "zh": "Only 12V",
+        "en": "Only 12V",
+        "de": "Nur 12V"
+    },
+    "photos_header": {
+        "zh": "📷 現場照片",
+        "en": "📷 Site Photos",
+        "de": "📷 Standortfotos"
+    },
+    "photo_pile_left": {
+        "zh": "充電樁 (左)",
+        "en": "Pile (Left)",
+        "de": "Ladesäule (Links)"
+    },
+    "photo_pile_right": {
+        "zh": "充電樁 (右)",
+        "en": "Pile (Right)",
+        "de": "Ladesäule (Rechts)"
+    },
+    "photo_gun": {
+        "zh": "充電槍",
+        "en": "Connector",
+        "de": "Anschluss"
+    },
+    "photo_plate": {
+        "zh": "銘牌",
+        "en": "Rating Plate",
+        "de": "Typenschild"
+    },
+    "missing_photo": {
+        "zh": "缺少 '{caption}' 照片",
+        "en": "Missing '{caption}' photo",
+        "de": "Fehlendes '{caption}'-Foto"
+    },
+    "history_header": {
+        "zh": "📜 查看簡化歷史",
+        "en": "📜 View Simplified History",
+        "de": "📜 Vereinfachte Historie anzeigen"
+    },
+    "no_match": {
+        "zh": "沒有找到匹配的站點。請調整您的搜索或篩選條件。",
+        "en": "No matching stations found. Please adjust your search or filter criteria.",
+        "de": "Keine passenden Stationen gefunden. Bitte passen Sie Ihre Such- oder Filterkriterien an."
+    },
+    "data_file_error": {
+        "zh": "錯誤：找不到數據文件 {file}。請先運行 app.ipynb 生成該文件。",
+        "en": "Error: Data file {file} not found. Please run app.ipynb to generate it first.",
+        "de": "Fehler: Datendatei {file} nicht gefunden. Bitte führen Sie zuerst app.ipynb aus, um sie zu generieren."
+    }
+}

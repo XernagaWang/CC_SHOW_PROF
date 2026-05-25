@@ -1,0 +1,11 @@
+{
+  "station_id": "CD_xiao_ju_chong_dian_001",
+  "station_name_original": "\u9ad8\u76db\u516c\u9986\u5145\u7535\u7ad9",
+  "photos": {
+    "pile_left": "pile_left.png",
+    "pile_right": "pile_right.png",
+    "gun": "gun.png",
+    "plate": "plate.png"
+  },
+  "last_updated": "2026-03-09T17:44:32.019030+08:00"
+}

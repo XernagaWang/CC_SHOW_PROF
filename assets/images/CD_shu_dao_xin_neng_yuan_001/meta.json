@@ -1,0 +1,11 @@
+{
+  "station_id": "CD_shu_dao_xin_neng_yuan_001",
+  "station_name_original": "\u8700\u9053\u65b0\u80fd\u6e90\u6c7d\u8f66\u5145\u7535\u7ad9(\u4e07\u8d2f\u5546\u57ce\u5145\u7535\u7ad9\u9879\u76ee)",
+  "photos": {
+    "pile_left": "pile_left.png",
+    "pile_right": "pile_right.png",
+    "gun": "gun.png",
+    "plate": "plate.png"
+  },
+  "last_updated": "2026-03-11T16:55:19.910162+08:00"
+}

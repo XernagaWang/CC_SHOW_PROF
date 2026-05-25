@@ -1,0 +1,11 @@
+{
+  "station_id": "CD_NIO_001",
+  "station_name_original": "\u851a\u6765\u80fd\u6e90\u8d85\u7ea7\u5145\u7535\u7ad9(\u6210\u90fd\u9e93\u6e56\u6d77\u6d6a\u516c\u56ed)",
+  "photos": {
+    "pile_left": "pile_left.png",
+    "pile_right": "pile_right.png",
+    "gun": "gun.png",
+    "plate": "plate.png"
+  },
+  "last_updated": "2026-03-12T12:20:16.942127+08:00"
+}

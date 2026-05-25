@@ -15,3 +15,11 @@ pip-selfcheck.json
 Day/
 
 .DS_Store
+__pycache__/
+*.pyc
+
+# Local archives (optional; remove line to track small docs only)
+archive/backups/
+
+# Legacy nested repo — remove folder when cleaning up
+charging_list_app/.git/
